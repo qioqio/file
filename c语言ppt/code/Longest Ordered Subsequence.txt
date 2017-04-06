@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+/*
+8
+
+8
+1 7 3 5 9 4 8 5
+*/
+
+
+int main()
+{
+    int log;
+    scanf("%d",&log);
+
+    int mat[log];
+    int n;
+    for(n=0;n<log;n++)
+        {
+            scanf("%d",&mat[n]);
+        }
+    int up[log];
+
+    up[0]=1;
+    for(n=1;n<log;n++)
+        {
+            int m;
+            up[n]=1;
+            for(m=n-1;m>=0;m--)
+            {
+                if(mat[m]<mat[n])
+                    {
+                        if(up[n]<up[m]+1){up[n]=up[m]+1;}
+                    }
+            }
+        }
+    int max=1;
+    for(n=0;n<log;n++)
+    {
+        if(up[n]>max)
+            {max=up[n];}
+
+    }
+    printf("%d\n",max);
+    return 0;
+}

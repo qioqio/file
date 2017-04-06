@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define N  200000
+/*
+sequence subsequence
+person compression
+VERDI vivaVittorioEmanueleReDiItalia
+caseDoesMatter CaseDoesMatter
+
+*/
+
+
+
+int main()
+{
+    char sting1[N];
+    char sting2[N];
+    while(scanf("%s %s",sting1,sting2)!=EOF)
+    {
+        int i=0,j=0;
+        while(1)
+        {
+            if(i==strlen(sting1))
+            {
+                printf("Yes\n");
+                break;
+            }
+            else
+            {
+                if(j==strlen(sting2))
+                {
+                    printf("No\n");
+                    break;
+                }
+                else
+                {
+                    if(sting1[i]==sting2[j])
+                    {
+                        i++;
+                        j++;
+                    }
+                    else
+                    {
+                        j++;
+                    }
+                }
+            }
+        }
+    }
+    return 0;
+}

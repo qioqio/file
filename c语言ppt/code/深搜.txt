@@ -1,0 +1,99 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+int a,b,c,d;
+int v[40][40][40];
+int mat[40][40];
+int r,cl;
+int k;
+int dx[4]={0,1,0,-1};
+int dy[4]={1,0,-1,0};
+struct que
+{   int head;
+    int tail;
+    int mat[100000][4];
+};
+struct que q;
+void push(int a,int b,int c,int d)
+{   q.tail++;
+    q.mat[q.tail-1][0]=a;
+    q.mat[q.tail-1][1]=b;
+    q.mat[q.tail-1][2]=c;
+    q.mat[q.tail-1][3]=d;
+}
+void  front()
+{
+    q.head++;
+    a=q.mat[q.head-1][0];
+    b=q.mat[q.head-1][1];
+    c=q.mat[q.head-1][2];
+    d=q.mat[q.head-1][3];
+}
+
+int  bfs()
+{
+    int i;
+    q.head=0;
+    q.tail=0;
+    push(0,0,0,1);
+    v[0][0][0]=1;
+    while(q.head<q.tail)
+    {
+
+        front();
+
+        if(a==r-1&&b==cl-1)
+            return d-1;
+        for(i=0;i<4;i++)
+        {   int nx,ny;
+            nx=a+dx[i];
+            ny=b+dy[i];
+            int layer=c;
+
+            if(nx>=0 && nx<r && ny>=0 && ny<cl)
+            {
+                if(mat[nx][ny]==0) layer=0;
+                else layer++;
+
+                if(layer<=k && v[nx][ny][layer]==0)
+                {
+                    push(nx,ny,layer,d+1);
+
+                }
+                v[nx][ny][layer]=1;
+            }
+        }
+    }
+    return -1;
+}
+int main()
+{
+#ifndef ONLINE_JUDGE
+	freopen("in.txt","r",stdin);
+#endif
+
+    int times;
+    scanf("%d",&times);
+    while(times--)
+    {
+        memset(v,0,sizeof(v));
+        memset(mat,0,sizeof(mat));
+        scanf("%d",&r);
+        scanf("%d",&cl);
+        scanf("%d",&k);
+
+        int i,j;
+        for(i=0;i<r;i++)
+        {
+            for(j=0;j<cl;j++)
+                {
+                    scanf("%d",&mat[i][j]);
+                }
+        }
+
+        printf("%d\n",bfs());
+    }
+	return 0;
+
+}
+

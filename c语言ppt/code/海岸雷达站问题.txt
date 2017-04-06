@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+/*
+3 2
+1 2
+-3 1
+2 1
+
+1 2
+0 2
+
+0 0
+*/
+int main()
+{
+    int n,d,times=0;
+    scanf("%d %d",&n,&d);
+    while(n!=0)
+    {   times++;
+        int mat[n][2];
+        int m,z,legal=1,answer=-1;
+        for(m=0;m<n;m++)
+        {
+            scanf("%d %d",&mat[m][0],&mat[m][1]);
+            if(mat[m][1]<0 || mat[m][1]>d){legal=0;}
+        }
+        if(legal)
+        {
+            double round[n][2];
+            for(m=0;m<n;m++)
+            {
+                round[m][0]=mat[m][0]-sqrt((double)(d*d-mat[m][1]*mat[m][1]));
+                round[m][1]=mat[m][0]+sqrt((double)(d*d-mat[m][1]*mat[m][1]));
+            }
+
+            double temp1,temp2;
+            for(m=0;m<n;m++)
+            {
+                for(z=0;z<n-1;z++)
+                {
+                    if(round[z][1]>round[z+1][1])
+                    {
+                        temp1=round[z][1];
+                        round[z][1]=round[z+1][1];
+                        round[z+1][1]=temp1;
+                        temp2=round[z][0];
+                        round[z][0]=round[z+1][0];
+                        round[z+1][0]=temp2;
+                    }
+
+                }
+
+            }
+
+            answer=1;
+            double right=round[0][1];
+            for(z=1;z<n;z++)
+            {
+                if(round[z][0]>right)
+                {
+                    right=round[z][1];
+                    answer++;
+                }
+            }
+        }
+        printf("Case %d: %d\n",times,answer);
+        scanf("%d %d",&n,&d);
+    }
+    return 0;
+}

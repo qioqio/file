@@ -1,0 +1,220 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+/*printf("%c %c %d\n",s[n],top(),p.a);
+5
+[(([()]))()()]
+([()[]()])()(
+([()[]()])()()[]
+
+([()[]()])()()[]()(((((((
+*/
+struct pare
+{   int a;
+    char b[200];
+};
+struct pare p;
+
+
+void push(char c)
+{   p.a++;
+    p.b[p.a]=c;
+
+}
+void pop()
+{
+    p.a--;
+}
+char top()
+{
+    return p.b[p.a];
+}
+int main()
+{
+    int times;
+    scanf("%d",&times);
+    getchar();
+    char s[200];
+    int n,length=0;
+
+    while(times--)
+    {   p.a=0;
+        int legal=1;
+        gets(s);
+        length=strlen(s);
+        for(n=0;n<length;n++)
+        {
+            if(p.a<0){legal=0;break;}
+            if(s[n]=='(' || s[n]=='[' )
+            {
+                push(s[n]);
+            }
+            else
+            {
+                if(s[n]==']')
+                {
+                    if(top()=='[')
+                        {pop();}
+                    else
+                        {legal=0;break;}
+                }
+                if(s[n]==')')
+                {
+                    if(top()=='(')
+                        {pop();}
+                    else
+                        {legal=0;break;}
+                }
+            }
+        }
+
+        if(legal && p.a==0)
+        {
+            printf("Yes\n");
+        }
+        else
+        {
+            printf("No\n");
+        }
+    }
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+/*
+9
+A 50 10
+B 10 20
+C 20 5
+D 30 35
+E 35 15
+F 15 5
+G 5 10
+H 10 20
+I 20 25
+A
+B
+C
+(AA)
+(AB)
+(AC)
+(A(BC))
+((AB)C)
+((D(EF))((GH)I))
+(D(E(F(G(HI)))))
+(((((DE)F)G)H)I)
+
+*/
+
+int ret(char b)
+{
+    int a;
+    a=b;
+    return a;
+}
+char ret2(int  b)
+{
+    char a;
+    a=b;
+    return a;
+}
+struct alpha
+{
+    char mat[10000];
+    int n;
+};
+struct alpha al;
+void push(char  c)
+{   al.n++;
+    al.mat[al.n]=c;
+}
+char pop()
+{
+    al.n--;
+    return al.mat[al.n+1];
+}
+int main()
+{
+    int times;
+    scanf("%d",&times);
+    int ma[26][2];
+    int ma2[26][2];
+    memset(ma,0,sizeof(ma));
+    while(times--)
+    {
+        char m;
+        scanf("%s",&m);
+        scanf("%d",&ma[ret(m)-65][0]);
+        scanf("%d",&ma[ret(m)-65][1]);
+    }
+    int i,j;
+    for(i=0;i<26;i++)
+    {
+        for(j=0;j<2;j++)
+        {
+        ma2[i][j]=ma[i][j];
+        }
+    }
+    getchar();
+    char express[1000];
+    while(gets(express)!=NULL)
+    {
+        for(i=0;i<26;i++)
+        {
+            for(j=0;j<2;j++)
+            {
+            ma[i][j]=ma2[i][j];
+            }
+        }
+        int l;
+        memset(al.mat,0,sizeof(al.mat));
+        int flag=1;
+        int  ans=0;
+        for(l=0;l<strlen(express);l++)
+        {
+            if(strlen(express)==1){break;}
+            if(express[l]=='('){continue;}
+            else if(express[l]==')')
+            {
+                int al1=ret(pop())-65;
+                int al2=ret(pop())-65;
+                if(ma[al2][1]!=ma[al1][0])
+                     {flag=0;break;}
+                else
+                    {ans+=ma[al2][1]*ma[al2][0]*ma[al1][1];
+                    ma[al2][1]=ma[al1][1];
+                    push(ret2(al2+65));}
+            }
+            else
+            {push(express[l]);}
+        }
+        if(flag)
+            printf("%d\n",ans);
+        else{printf("error\n");}
+    }
+    return 0;
+
+
+
+
+}
+
+
+
+
+
+
+
+
+

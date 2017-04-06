@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+int r,c;
+char maze[15][15];
+int times=0;
+int isatt[15][15];
+void oper(int m)
+{
+    int i=m/c,j=m%c;
+    int a,b;
+
+    for(a=0;a<c;a++)
+    {
+        isatt[i][a]++;
+    }
+    for(a=0;a<r;a++)
+    {
+        isatt[a][j]++;
+    }
+    for(a=0;a<r;a++)
+    {
+        for(b=0;b<c;b++)
+        {
+            if(a+b==i+j)isatt[a][b]++;
+            if(a-b==i-j)isatt[a][b]++;
+        }
+    }
+
+}
+void deoper(int m)
+{
+    int i=m/c,j=m%c;
+    int a,b;
+
+    for(a=0;a<c;a++)
+    {
+        isatt[i][a]--;
+    }
+    for(a=0;a<r;a++)
+    {
+        isatt[a][j]--;
+    }
+    for(a=0;a<r;a++)
+    {
+        for(b=0;b<c;b++)
+        {
+            if(a+b==i+j)isatt[a][b]--;
+            if(a-b==i-j)isatt[a][b]--;
+        }
+    }
+
+}
+int solve(int now,int max,int m)
+{
+    if(now==max)
+    {
+        int i,j;
+        for(i=0;i<r;i++)
+        {
+            for(j=0;j<c;j++)
+            {
+                if(maze[i][j]=='X' && isatt[i][j]<=0)
+                    {return 0;}
+            }
+        }
+        printf("Case %d: %d\n",times,now);
+        return 1;
+    }
+    int x;
+    for(x=m;x<c*r;x++)
+    {
+        oper(x);
+
+        if(solve(now+1,max,x+1))return 1;
+        deoper(x);
+    }
+    return 0;
+}
+
+int main(){
+#ifndef ONLINE_JUDGE
+	freopen("in.txt","r",stdin);
+#endif
+    while(scanf("%d%d",&r,&c)==2&&r)
+    {
+        int i;
+        for(i=0;i<r;i++)
+            scanf("%s",maze[i]);
+
+        times++;
+        memset(isatt,0,sizeof(isatt));
+        int max;
+        for(max=1;max<7;max++)
+        {
+
+            if(solve(0,max,0)) break;
+
+        }
+    }
+
+	return 0;
+}

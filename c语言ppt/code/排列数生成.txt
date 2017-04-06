@@ -1,0 +1,12 @@
+int  mat[505][505];
+void oper2()
+{
+    int i,j;
+    memset(mat,0,sizeof(mat));
+    for(i=0;i<=405;i++)
+        {mat[i][0]=1;mat[i][i]=1;}
+    for(i=1;i<=405;i++)
+        for(j=1;j<i;j++)
+            mat[i][j]=(mat[i-1][j-1]+mat[i-1][j])%mod;
+
+}

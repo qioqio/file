@@ -1,0 +1,12 @@
+int head[],next[],len[],e[],cts=1;
+int buildedge(int a,int b,int c){
+	e[cts]= b;
+	len[cts]=c;
+	next[cts]=head[a];
+	head[a]=cts++;
+}
+
+
+for(i=head[x];i>0;i=next[i]){//遍历从x出发的所有边
+	//x->e[i],长度len[i]
+}

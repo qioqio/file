@@ -1,0 +1,226 @@
+.586
+.MODEL flat, STDCALL
+.STACK 4096
+includelib "C:\msvcrt.lib"
+
+; 为外部提供的东东在这儿声明
+public C qi, qo, qp,n
+
+; 函数不论内外都在这儿声明
+printf	PROTO C : ptr byte, : vararg
+qi		PROTO C :PTR BYTE,:ptr DWORD,:byte
+qo		PROTO C :PTR BYTE,:ptr DWORD,:PTR BYTE
+qp		PROTO C :PTR BYTE,:dword,:dword
+incp	proto c :ptr dword
+
+
+
+chr$ MACRO any_text : vararg
+	LOCAL textname
+	.const
+		textname db any_text, 0
+	ALIGN 4
+	.code
+		EXITM <OFFSET textname>
+ENDM
+
+.data
+	 buf	BYTE	16 dup (0ffh)
+	 pi		DWORD	0
+	 po		DWORD	0
+	 n		DWORD	0
+	 chr	BYTE	0
+.code
+incp    proc c uses ebp ebx eax  p:ptr dword 
+        mov     ebx, p ;将元素的地址送给ebx
+        mov     eax, [ebx];将元素送给eax，并且将eax加1，并取模
+        inc     eax
+        cmp     eax, 16
+        jne     L1
+        mov     eax, 0
+    L1: 
+        mov     [ebx], eax
+        ret
+
+    incp    endp   
+qi  proc c uses edi  ecx  esi ebx ebp  a:ptr byte,b:ptr dword,I :byte
+
+        cmp     n, 16
+        jne     L2              ; 判断是否是满的
+        mov     eax, 0;给eax赋返回值
+        ret
+    L2: 
+
+
+        mov     ebx, [ebp+8]    ; buf的地址
+        mov     esi, [ebp+12]   ; pi的地址
+        mov     edi, [esi]      ; 取出pi的值
+        mov     ecx, [ebp+16]   ; chr的内容
+        push    esi;确保esi的值正确
+        call    incp
+        pop     esi
+
+        mov     [ebx+edi], cl;将cl的内容输入队列之中
+
+        inc     n;增加n的值
+        mov     eax, 1;给eax赋返回值
+
+
+        ret
+qi  endp
+
+
+
+qo  proc C uses edi  ecx esi ebx ebp  J:ptr byte,d:ptr dword,e :ptr byte
+        cmp     n, 0
+        jne     L3              ;判断数组是不是空的
+        mov     eax, 0
+        ret
+    L3: 
+        mov     ebx, j   ; buf的地址
+        mov     esi, d ; 出队指针po的地址
+        mov     edi, [esi]       ; 出队指针po
+        push    esi
+        call    incp
+        pop     esi
+        mov     esi, e   ; 取出chr的地址
+        mov     cl, [ebx+edi]   ; 将元素输入到cl中
+        mov     [esi], cl ;将cl中元素赋给chr
+
+        dec     n    ;改变n的值
+        mov     eax, 1    ;给eax赋返回值
+
+        ret
+	qo  endp
+   
+   
+    
+qp  proc c uses edi  ecx edi esi ebx ebp  f:ptr byte,g:dword,h :dword
+        invoke	printf,chr$("当前队列内容为： ")
+
+
+        mov     ebx, [ebp+8]    ; &buf
+        mov     esi, [ebp+16]   ; po
+        mov     edi, [ebp+12]   ; pi
+
+
+		mov ecx ,n
+		l8:
+		mov eax ,ebx
+		add eax,esi
+		
+		push eax
+		push ecx
+		invoke printf,chr$("%c"),byte ptr [eax]
+		pop ecx
+		pop eax
+
+		inc     esi
+        cmp     esi, 16
+        jne    l7
+        mov     esi, 0
+		l7:
+		loop l8
+
+
+
+
+    L9: 
+	invoke	printf,chr$(" 队首下标为: %d  队尾下标为: %d 元素个数为: %d",0dh,0ah),dword ptr[ebp+16],dword ptr[ebp+12],n
+        mov     eax, n
+
+
+        ret
+ qp  endp
+		END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#include <stdio.h>
+#include <conio.h>
+#include <string.h>
+
+//调用外部程序的东东在这儿声明
+extern "C" int n ;			//传过来的数组必须是地址，而不是数组的内容
+extern "C" char* buf;
+extern "C" char chr;
+extern "C"  int pi, po;
+extern "C" int qi(&buf，&pi，chr);
+extern "C"int  qo(&buf, &po, &chr);
+extern "C" int  qp(&buf, pi, po);
+
+//为外部程序提供的东东在这儿声明
+extern  "C"
+{
+
+	void  incp(int* p)
+	{
+		*p %= 16;
+	}
+
+}
+
+
+int main()
+{
+	printf("请选择：ESC 退出；- 从队列提取元素显示 +打印当前队列；0-9A-Z进入队列，其他抛弃。\n");
+	
+	char s;
+	
+	while (1)
+	{
+		scanf_s("%c", &s);
+		if (s >= 'A'&&s <= 'Z')
+		{
+			qi(&buf，&pi，s);
+
+		}
+		else if (s >= '0'&&s <= '9')
+		{
+			qi(&buf，&pi，s);
+		}
+		else if (s == '-')
+		{
+			qo(&buf, &po, &s);
+		}
+		else if (s == '+')
+		{
+			qp(&buf, pi, po);
+		}
+		else if (s == '1BH')
+		{
+			getchar();
+			return 0;
+		}
+	}
+
+}
+
+
+
+
+
+
+
+
+
+

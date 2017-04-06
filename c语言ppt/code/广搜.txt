@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+char maze[25][25];
+int q[400],v[400];
+int dx[4]={0,1,0,-1};
+int dy[4]={1,0,-1,0};
+int w,h;
+int bfs(int stx,int sty){
+    int head=0,tail=1,ans=1,i;
+    int x,y,cur,nx,ny,nxt;
+    memset(v,0,sizeof(v));
+    q[head]=stx*w+sty;
+    v[stx*w+sty]=1;
+    while(head<tail)
+    {
+     cur=q[head];
+    x=cur/w,y=cur%w;
+    for(i=0;i<4;i++){
+        nx=x+dx[i],ny=y+dy[i];
+        if(nx<0 || nx>=h || ny<0 || ny>=w || maze[nx][ny]=='#' || v[nx *w+ny]==1) continue;
+        ans++;
+        nxt=nx*w+ny;
+        v[nxt]=1;
+        q[tail++]=nxt;
+        }
+    head++;
+    }
+return ans;
+}
+int main()
+{
+    while(scanf("%d%d",&w,&h))
+    {   int i,j;
+    int a,b;
+        if(w==0 || h==0)break;
+        for(i=0;i<h;i++)
+            scanf("%s",maze[i]);
+        for(i=0;i<h;i++)
+        for(j=0;j<w;j++)
+            if(maze[i][j]=='@')
+        {
+            a=i;b=j;
+        }
+        printf("%d\n",bfs(a,b));
+    }
+    return 0;
+}
